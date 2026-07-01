@@ -10,6 +10,16 @@ export const store=configureStore({
     },
     middleware:(getDefaultMiddleware)=>
         getDefaultMiddleware().concat(api.middleware)
+
+});
+
+store.subscribe(()=>{
+    try {
+        const cartItems=store.getState().cardItem.items
+        localStorage.setItem('cart',JSON.stringify(cartItems))
+    } catch (error) {
+        console.error('Не вдалося зберегти кошик в localStorage',error)
+    }
 })
 
 export type RootState=ReturnType<typeof store.getState>

@@ -1,27 +1,49 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 
+const loadCartFromLocalStorage=()=>{
+    try {
+        const savedCart=localStorage.getItem('cart')
+        return savedCart ? JSON.parse(savedCart) : []
+    } catch (error) {
+        console.error('Помилка завантаження кошика')
+        return []
+    }
+}
 export interface Product{
-    id:number,
+    id:string,
     title:string,
     price:number,
     image:string,
+    oldPrice?:number,
+    code?:number,
+    seller?:string
 }
 
-export interface CardItem extends Product{
+export interface Banner{
+    id:string,
+    isActive:boolean,
+    imageUrl:string,
+    link?:string,
+    order:number
+}
+
+export interface CartItem extends Product{
     quantity:number
 }
 
-interface CardState {
-items:CardItem[]
+interface CartState {
+items:CartItem[],
+isCartOpen:boolean
 }
-const initialState:CardState={
-items:[]
+const initialState:CartState={
+items:loadCartFromLocalStorage(),
+isCartOpen:false
 }
-export const cardSlice=createSlice({
+export const cartSlice=createSlice({
     name:'cart',
     initialState,
     reducers:{
-        addToCard:(state,action:PayloadAction<Product>)=>{
+        addToCart:(state,action:PayloadAction<Product>)=>{
             const newItem=action.payload
             const existItem=state.items.find(item=>item.id===newItem.id)
 
@@ -31,11 +53,11 @@ export const cardSlice=createSlice({
                 state.items.push({...newItem,quantity:1})
             }
         },
-        removeFromCard:(state,action:PayloadAction<number>)=>{
+        removeFromCart:(state,action:PayloadAction<string>)=>{
             const idToRemove=action.payload
             state.items=state.items.filter(f=>f.id!==idToRemove)
         },
-        decreaseQuantity:(state,action:PayloadAction<number>)=>{
+        decreaseQuantity:(state,action:PayloadAction<string>)=>{
             const idToDecrease=action.payload
             const existingItems=state.items.find(item=>item.id===idToDecrease)
             if(existingItems){
@@ -45,9 +67,15 @@ export const cardSlice=createSlice({
                     state.items=state.items.filter(f=>f.id!==idToDecrease)
                 }
             }   
+        },
+        openCart:(state)=>{
+            state.isCartOpen=true;
+        },
+        closeCart:(state)=>{
+            state.isCartOpen=false;
         }
     },
 });
 
-export const {addToCard,removeFromCard,decreaseQuantity}=cardSlice.actions
-export default cardSlice.reducer;
+export const {addToCart,removeFromCart,decreaseQuantity,openCart,closeCart}=cartSlice.actions
+export default cartSlice.reducer;

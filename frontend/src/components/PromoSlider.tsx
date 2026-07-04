@@ -4,7 +4,24 @@ import { useGetBannersQuery } from "../store/api/api"
 
 export const PromoSlider=()=>{
     const [currentIndex,setCurrentIndex]=useState(0)
-    const {data:banners=[],isLoading,error}=useGetBannersQuery()
+    const {data:banners,isLoading}=useGetBannersQuery()
+    useEffect(()=>{
+        if(!banners || banners.length===0) return
+        const interval=setInterval(()=>{
+            nextSlide()
+        },5000)
+        return ()=>clearInterval(interval)
+    },[currentIndex,banners])
+    
+    if(isLoading){
+        return (
+            <div 
+                className="w-full bg-gray-200 animate-pulse rounded-lg" 
+                style={{ marginTop: '20px', height: '155px' }}
+            ></div>
+        );
+    }
+    if(!banners || banners.length===0) return null
     const prevSlide=()=>{
         const isFirstSlide=currentIndex===0
         const newIndex=isFirstSlide ? banners.length-1 : currentIndex-1
@@ -17,18 +34,11 @@ export const PromoSlider=()=>{
         setCurrentIndex(newIndex)
     }
 
-    useEffect(()=>{
-        const interval=setInterval(()=>{
-            nextSlide()
-        },5000)
-        return ()=>clearInterval(interval)
-    },[currentIndex])
-
     return (
         <div className="relative w-full h-12 sm:h-55 md:h-70 rounded-lg overflow-hidden " style={{marginTop:'20px',height:'155px'}}>
             <div className="flex transition-transform ease-out duration-500 h-full"
             style={{transform:`translateX(-${currentIndex*100}%)`}}>
-                {banners.map((banner)=>(
+                {banners?.map((banner)=>(
                     <img key={banner.id}
                     src={banner.imageUrl}
                     alt={`Slide ${banner.id}`}

@@ -1,33 +1,36 @@
-import { Baby, Bath, BatteryCharging, Car, Gamepad2, Gift, Laptop, Martini, Monitor, Paperclip, PawPrint, Shirt, Smartphone, Smile, Sofa, SprayCan, Star, Tag, TreePine, Wrench } from "lucide-react"
+import { Baby, Bath, BatteryCharging, Car, Gamepad2, Gift, Laptop, Martini, Monitor, Package, Paperclip, PawPrint, Shirt, Smartphone, Smile, Sofa, SprayCan, Star, Tag, TreePine, Wrench } from "lucide-react"
 import { FaDribbble } from "react-icons/fa"
+import { useGetCategoriesQuery } from "../store/api/api";
 
 const iconProps = { size: 22, strokeWidth: 1.5 };
 
-const categories = [
-    { name: 'Ноутбуки та комп\'ютери', icon: <Laptop {...iconProps} /> },
-    { name: 'Смартфони, ТВ і електроніка', icon: <Smartphone {...iconProps} /> },
-    { name: "Товари для геймерів", icon: <Gamepad2 {...iconProps} /> },
-    { name: "Побутова техніка", icon: <Monitor {...iconProps} /> },
-    { name: "Товари для дому", icon: <Sofa {...iconProps} /> },
-    { name: "Авто і мото", icon: <Car {...iconProps} /> },
-    { name: "Інструменти та обладнання", icon: <Wrench {...iconProps} /> },
-    { name: "Сантехніка та ремонт", icon: <Bath {...iconProps} /> },
-    { name: "Дача, сад і город", icon: <TreePine {...iconProps} /> },
-    { name: "Спорт і захоплення", icon: <FaDribbble size={22} /> },
-    { name: "Одяг, взуття та прикраси", icon: <Shirt {...iconProps} /> },
-    { name: "Краса та здоров'я", icon: <Smile {...iconProps} /> },
-    { name: "Дитячі товари", icon: <Baby {...iconProps} /> },
-    { name: 'Зоотовари', icon: <PawPrint {...iconProps} /> },
-    { name: 'Офіс, школа, книги', icon: <Paperclip {...iconProps} /> },
-    { name: 'Алкогольні напої та продукти', icon: <Martini {...iconProps} /> },
-    { name: 'Побутова хімія', icon: <SprayCan {...iconProps} /> },
-    { name: 'Енергонезалежність', icon: <BatteryCharging {...iconProps} /> },
-    { name: 'Подарунки та сувеніри', icon: <Gift {...iconProps} /> },
-    { name: 'Топи продажів', icon: <Star {...iconProps} /> },
-    { name: 'Всі акції', icon: <Tag {...iconProps} /> }
-];
+const categoryIcons:Record<string,React.ReactNode> = {
+  'Ноутбуки та комп\'ютери': <Laptop {...iconProps} />,
+  'Смартфони, ТВ і електроніка': <Smartphone {...iconProps} /> ,
+  "Товари для геймерів": <Gamepad2 {...iconProps} /> ,
+  "Побутова техніка": <Monitor {...iconProps} /> ,
+  "Товари для дому": <Sofa {...iconProps} /> ,
+  "Авто і мото": <Car {...iconProps} /> ,
+  "Інструменти та обладнання": <Wrench {...iconProps} /> ,
+  "Сантехніка та ремонт": <Bath {...iconProps} /> ,
+  "Спорт і захоплення": <FaDribbble size={22} /> ,
+  "Дача, сад і город": <TreePine {...iconProps} /> ,
+  "Одяг, взуття та прикраси": <Shirt {...iconProps} /> ,
+  "Краса та здоров'я": <Smile {...iconProps} /> ,
+  "Дитячі товари": <Baby {...iconProps} /> ,
+  'Зоотовари': <PawPrint {...iconProps} /> ,
+  'Офіс, школа, книги': <Paperclip {...iconProps} /> ,
+  'Алкогольні напої та продукти': <Martini {...iconProps} /> ,
+  'Побутова хімія': <SprayCan {...iconProps} /> ,
+  'Енергонезалежність': <BatteryCharging {...iconProps} /> ,
+  'Подарунки та сувеніри': <Gift {...iconProps} /> ,
+  'Топи продажів': <Star {...iconProps} /> ,
+  'Всі акції': <Tag {...iconProps} /> 
+}
 
 export const SideBar = () => {
+    const {data:dbCategories,isLoading}=useGetCategoriesQuery()
+    console.log("КАТЕГОРІЇ З БАЗИ:", dbCategories);
     return (
         <aside 
             style={{ width: '350px', flexShrink: 0, borderRight: '1px solid #e5e7eb',paddingTop:'20px',paddingLeft:'30px' }} 
@@ -59,12 +62,14 @@ export const SideBar = () => {
                 </div>
                 
             </div>
-
+            {isLoading ? (
+                <div className="p-4 text-center text-gray-500">Завантаження категорій...</div>
+            ):(
             <ul style={{ display: 'flex', flexDirection: 'column', padding: '12px 16px 12px 8px', margin: 0, listStyle: 'none' }}>
-                {categories.map((cat, index) => (
-                    <li key={index}>
+                {dbCategories?.map((cat) => (
+                    <li key={cat.id}>
                         <a
-                            href="#"
+                            href={`/catalog?categoryId=${cat.id}`}
                             className="text-[#221f1f] hover:text-[#00a046] hover:bg-[#e5f4eb] rounded-lg group transition-colors"
                             style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '8px 12px', fontSize: '15px', textDecoration: 'none'}}
                         >
@@ -72,13 +77,15 @@ export const SideBar = () => {
                                 className="text-[#797878] group-hover:text-[#00a046] transition-colors " 
                                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px' }}
                             >
-                                {cat.icon}
+                                {categoryIcons[cat.title] || <Package {...iconProps}/>}
                             </span>
-                            {cat.name}
+                            {cat.title}
                         </a>
                     </li>
                 ))}
             </ul>
+            )}
+
         </aside>
     )
 }

@@ -27,7 +27,7 @@ export const ShopPage=()=>{
                )}
             {!isLoading && !error && (
            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-0" style={{marginTop:'10px'}}>
-            {items?.map((item)=>(
+            {items?.data?.map((item)=>(
                 <ProductCard key={item.id} product={item}/>
             ))}
           </div>

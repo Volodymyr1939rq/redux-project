@@ -7,7 +7,7 @@ export const SearchPage=()=>{
     const searchQuery=searchParam.get('text') || ''
 
     const {data:searchResults,isFetching}=useGetAllItemsQuery(
-        searchQuery,
+        {search:searchQuery},
         {skip:!searchQuery}
     )
 
@@ -15,7 +15,7 @@ export const SearchPage=()=>{
         return <div className="p-10 text-center text-xl">Шукаємо...</div>
     }
 
-    if(searchResults && searchResults.length===0){
+    if(searchResults && searchResults.data.length===0){
         return <EmptySearchPage/>
     }
 
@@ -27,7 +27,7 @@ export const SearchPage=()=>{
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             
-                {searchResults?.map(item => (
+                {searchResults?.data.map(item => (
                     <div key={item.id} className="border p-4 rounded-md">
                         {item.title}
                     </div>

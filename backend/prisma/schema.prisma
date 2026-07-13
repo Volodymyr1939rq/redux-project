@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Product{
+  id        String      @id  @default(cuid())
+  title     String
+  description  String?
+  price     Float
+  oldPrice  Float
+  code      Int
+  seller    String
+  image     String
+  createdAt DateTime @default(now()) 
+
+  category Category? @relation(fields: [categoryId],references: [id])
+  categoryId String? @map("category_id")
+
+  brandId   String
+  brand     Brand    @relation(fields: [brandId],references: [id])
+
+  @@map("product")
+}
+
+model PromoBanner {
+  id  String    @id      @default(cuid())
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  imageUrl      String
+  link          String?
+  order         Int      @default(0)
+}
+
+model Category{
+  id String @id @default(cuid())
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @default(now()) @map("updated_at")
+  image      String?
+  parentId   String?
+  parent     Category? @relation("CategoryHierarchy",fields: [parentId],references: [id])
+
+  children   Category[]  @relation("CategoryHierarchy")
+  title      String
+  products    Product[]
+
+  @@map("category")
+}
+
+model Brand{
+  id     String   @id    @default(cuid())
+  name   String   @unique
+  products Product[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now())
+}

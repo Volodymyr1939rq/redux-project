@@ -1,6 +1,7 @@
 import { Baby, Bath, BatteryCharging, Car, Gamepad2, Gift, Laptop, Martini, Monitor, Package, Paperclip, PawPrint, Shirt, Smartphone, Smile, Sofa, SprayCan, Star, Tag, TreePine, Wrench } from "lucide-react"
 import { FaDribbble } from "react-icons/fa"
 import { useGetCategoriesQuery } from "../store/api/api";
+import { Link } from "react-router-dom";
 
 const iconProps = { size: 22, strokeWidth: 1.5 };
 
@@ -30,7 +31,7 @@ const categoryIcons:Record<string,React.ReactNode> = {
 
 export const SideBar = () => {
     const {data:dbCategories,isLoading}=useGetCategoriesQuery()
-    console.log("КАТЕГОРІЇ З БАЗИ:", dbCategories);
+    
     return (
         <aside 
             style={{ width: '350px', flexShrink: 0, borderRight: '1px solid #e5e7eb',paddingTop:'20px',paddingLeft:'30px' }} 
@@ -68,11 +69,12 @@ export const SideBar = () => {
             <ul style={{ display: 'flex', flexDirection: 'column', padding: '12px 16px 12px 8px', margin: 0, listStyle: 'none' }}>
                 {dbCategories?.map((cat) => (
                     <li key={cat.id}>
-                        <a
-                            href={`/catalog?categoryId=${cat.id}`}
+                        <Link
+                         to={`/category/${cat.id}`}
                             className="text-[#221f1f] hover:text-[#00a046] hover:bg-[#e5f4eb] rounded-lg group transition-colors"
                             style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '8px 12px', fontSize: '15px', textDecoration: 'none'}}
                         >
+                       
                             <span 
                                 className="text-[#797878] group-hover:text-[#00a046] transition-colors " 
                                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px' }}
@@ -80,7 +82,7 @@ export const SideBar = () => {
                                 {categoryIcons[cat.title] || <Package {...iconProps}/>}
                             </span>
                             {cat.title}
-                        </a>
+                        </Link>
                     </li>
                 ))}
             </ul>

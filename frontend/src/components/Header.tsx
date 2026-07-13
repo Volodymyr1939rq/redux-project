@@ -29,7 +29,7 @@ export const Header = () => {
     
     const debauncedSearch = useDebaunce(value, 500)
     const { data: searchResults, isFetching } = useGetAllItemsQuery(
-        debauncedSearch,
+        {search:debauncedSearch},
         { skip: debauncedSearch.length < 2 }
     )
 
@@ -216,9 +216,9 @@ export const Header = () => {
                             <>
                                 
                                 <div className="flex flex-col" style={{ marginBottom: 0 ,marginTop:'-28px' }}>
-                                    {debauncedSearch.length >= 1 && searchResults && searchResults.length > 0 ? (
+                                    {debauncedSearch.length >= 1 && searchResults && searchResults.data.length > 0 ? (
                                         <ul className="flex flex-col">
-                                            {searchResults.map((item) => (
+                                            {searchResults?.data.map((item) => (
                                                 <li 
                                                     key={item.id}
                                                     className="flex justify-between items-center cursor-pointer transition-colors group"

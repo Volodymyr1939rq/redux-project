@@ -8,6 +8,7 @@ import { BrandFilter } from "../components/BtandFilter";
 import { SellerFilter } from "../components/SellerFilter";
 import { SortFilter } from "../components/SortFilter";
 import { Pagination } from "../components/Pagination";
+import { DeteiledProductCard } from "../components/DeteiledProductCard";
 
 export const CatalogPage=()=>{
     const {id:categoryId}=useParams<{id:string}>()
@@ -143,7 +144,7 @@ export const CatalogPage=()=>{
                     <LayoutToggle/>
             </div>
          </div>
-         <div className="flex items-start gap-8" >
+         <div className="flex items-start " >
             <aside className="w-64 shrink-0">
                 <div className="sticky top-4">
                     <div className="border-r border-[#e5e5e5]" style={{paddingRight:'16px',paddingTop:'24px'}}>
@@ -160,13 +161,13 @@ export const CatalogPage=()=>{
                     </div>
                 ): categoryResponse?.data && categoryResponse.data.length>0 ? (
                     <>
-                    <div className={`border-l border-t border-gray-200 grid gap-0 ${
+                    <div className={` border-gray-200 grid gap-0 ${
                         layout==='large'
                         ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4'
                         : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5'
                     }`}>
                         {categoryResponse.data.map((item:any)=>(
-                            <ProductCard key={item.id} product={item}/>
+                            <DeteiledProductCard key={item.id} products={item}/>
                         ))}
                     </div>
                     <Pagination lastPage={categoryResponse.lastPage}/>

@@ -1,4 +1,4 @@
-import { Heart, ShoppingCart } from "lucide-react"
+import { Check, Heart, ShoppingCart } from "lucide-react"
 import { addToCart, decreaseQuantity, type Product } from "../store/cart/cartSlice"
 import { useAppDispatch, useAppSelector } from "../store/hooks/hook"
 import { Link } from "react-router-dom"
@@ -34,7 +34,7 @@ export const ProductCard = ({ product }: ProductProps) => {
                 />
             </Link>
             <Link to={`/product/${product.id}`}>
-            <h3 className="text-[14px] text-[#3e77aa] group-hover:text-[#f84147] transition-colors cursor-pointer mb-4 line-clamp-2 min-h-10 font-medium" title={product.title}>
+            <h3 className="text-[14px] text-[#221f1f] group-hover:text-[#00a046] transition-colors cursor-pointer mb-4 line-clamp-2 min-h-10 font-normal hover:underline" title={product.title}>
                 {product.title}
             </h3>
             </Link>
@@ -50,24 +50,16 @@ export const ProductCard = ({ product }: ProductProps) => {
                 </div>
                 
                 {currentItems ? (
-                    <div className="flex items-center justify-between border-2 border-[#00a046] rounded-lg overflow-hidden h-9 w-22.5">
                         <button 
-                            onClick={() => dispatch(decreaseQuantity(product.id))}
-                            className="w-8 h-full bg-[#f5f5f5] hover:bg-gray-200 flex items-center justify-center font-bold text-gray-600 transition"
+                            className="relative text-[#00a046] shrink-0 flex items-center justify-center " style={{paddingLeft:"6px",paddingRight:"6px"}}
+                            title="Вже в кошику"
                         >
-                            -
+                            <ShoppingCart size={28} strokeWidth={2} fill="currentColor"/>
+                            <div className="absolute top-0 right-0 bg-[#00a046] rounded-full w-4 h-4 flex items-center justify-center border border-white ">
+                                <Check size={10} strokeWidth={3} color="white"/>
+                            </div>
                         </button>
-                        <span className="font-bold text-[14px] w-full text-center">
-                            {currentItems.quantity}
-                        </span>
-                        <button 
-                            onClick={() => dispatch(addToCart(product))}
-                            className="w-8 h-full bg-[#f5f5f5] hover:bg-gray-200 flex items-center justify-center font-bold text-gray-600 transition"
-                        >
-                            +
-                        </button>
-                    </div>
-                ) : (
+                ):(
                     <button 
                         onClick={() => dispatch(addToCart(product))}
                         className="text-[#00a046] hover:text-[#008d3d] transition active:scale-95"
@@ -76,7 +68,6 @@ export const ProductCard = ({ product }: ProductProps) => {
                     </button>
                 )}
             </div>
-
         </div>
       </div>
     )

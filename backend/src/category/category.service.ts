@@ -10,6 +10,7 @@ export class CategoryService {
         return await this.prisma.category.create({
             data:{
                 title:dto.title,
+                parentId:dto.parentId
             }
         })
     }

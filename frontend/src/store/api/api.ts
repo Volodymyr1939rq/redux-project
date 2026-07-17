@@ -7,6 +7,10 @@ export interface ProductResponse{
     total:number,
     lastPage:number
 }
+export interface BreadCrumbs{
+    title:string,
+    id:string
+}
 export interface ProductFiltersParam{
     page?:string | number,
     limit?:number,
@@ -35,7 +39,8 @@ export interface ICategory{
     title:string,
     image?:string,
     parentId?:string | null,
-    children?:ICategory[]
+    children?:ICategory[],
+    breadcrumbs?:BreadCrumbs[]
 }
 export const api=createApi({
     reducerPath:'api',

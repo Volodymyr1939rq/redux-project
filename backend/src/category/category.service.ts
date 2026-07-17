@@ -5,7 +5,22 @@ import { CategoryDto } from './category.dto';
 @Injectable()
 export class CategoryService {
     constructor(private readonly prisma:PrismaService){}
+    
+    private async BreadCrumbs(categoryId:string):Promise<{id:string,title:string}[]>{
+        const breadcrumbs:{id:string,title:string}[]=[]
+        let currentId:string | null=categoryId
+        while(currentId){
+            const cat=await this.prisma.category.findUnique({
+                where:{id:currentId},
+                select:{id:true,title:true,parentId:true}
+            });
+            if(!cat) break;
 
+            breadcrumbs.unshift({id:cat.id,title:cat.title})
+            currentId=cat.parentId
+        }
+        return breadcrumbs
+    }
     async create(dto:CategoryDto){
         return await this.prisma.category.create({
             data:{
@@ -31,6 +46,10 @@ export class CategoryService {
         if(!category){
             throw new NotFoundException('Категорію не знайдено') 
         }
-        return category;
+        const breadcrumbs=await this.BreadCrumbs(id)
+        return {
+            ...category,
+            breadcrumbs
+        }
     }
 }

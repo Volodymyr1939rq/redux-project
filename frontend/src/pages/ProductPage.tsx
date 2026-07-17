@@ -3,10 +3,10 @@ import { useAppDispatch, useAppSelector } from "../store/hooks/hook"
 import { useParams } from "react-router-dom"
 import { addToCart, openCart} from "../store/cart/cartSlice"
 import { useGetProductByIdQuery } from "../store/api/api"
+import { BreadCrumbs } from "../components/BreadCrumbs"
 
 export const ProductPage = () => {
     const { id } = useParams()
-    console.log('ID обраного товару', id)
     const dispatch = useAppDispatch()
     const cartItems=useAppSelector((state)=>state.cardItem.items)
     
@@ -25,9 +25,16 @@ export const ProductPage = () => {
         dispatch(addToCart(currentProduct))
         dispatch(openCart())
     }
+    const breadcrumms=currentProduct.breadCrumbs?.map((b)=>({
+        label:b.title,
+        path:b.id===currentProduct.id ? `/product/${b.id}` : `/category/${b.id}`
+    })) || []
     return (
         <div className="min-h-screen bg-[#f5f5f5] font-sans text-gray-900" style={{ paddingBottom: '60px' }}>
             <div style={{ maxWidth: '1240px', margin: '0 auto', paddingTop: '20px', paddingLeft: '16px', paddingRight: '16px' }}>
+            {breadcrumms.length>0 && (
+                <BreadCrumbs item={breadcrumms}/>
+            )}
                 
                 <div className="sticky z-40 top-18 bg-white rounded-lg shadow-sm border border-gray-200" style={{ marginBottom: '16px' }}>
                     <div className="flex items-center gap-8" style={{ paddingLeft: '24px' }}>

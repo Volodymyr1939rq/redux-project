@@ -9,6 +9,10 @@ const loadCartFromLocalStorage=()=>{
         return []
     }
 }
+export interface BreadCrumbs{
+    title:string,
+    id:string
+}
 export interface Product{
     id:string,
     title:string,
@@ -16,7 +20,8 @@ export interface Product{
     image:string,
     oldPrice?:number,
     code?:number,
-    seller?:string
+    seller?:string,
+    breadCrumbs?:BreadCrumbs[]
 }
 
 export interface Banner{

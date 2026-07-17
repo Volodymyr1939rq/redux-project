@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 
-// Описуємо типи для пропсів
 interface SubCategoriesGridProps {
   subCategories?: any[];
   isLoading?: boolean;
@@ -31,7 +30,7 @@ export const SubCategoriesGrid = ({ subCategories = [], isLoading }: SubCategori
       }}>
         
         {subCategories.map((cat, index) => {
-          // Автоматично визначаємо, чи є в цієї підкатегорії свої вкладені підкатегорії (Level 3)
+          
           const hasChildren = cat.children && cat.children.length > 0;
           const isCentered = !hasChildren;
 
@@ -47,7 +46,6 @@ export const SubCategoriesGrid = ({ subCategories = [], isLoading }: SubCategori
                 boxSizing: 'border-box'
               }}
             >
-              {/* Картинка підкатегорії */}
               <Link 
                 to={`/category/${cat.id}`}
                 style={{ display: 'block', width: '100%', height: '120px', marginBottom: '16px' }}
@@ -73,7 +71,6 @@ export const SubCategoriesGrid = ({ subCategories = [], isLoading }: SubCategori
                 </div>
               </Link>
 
-              {/* Головне посилання на підкатегорію */}
               <Link 
                 to={`/category/${cat.id}`} 
                 style={{

@@ -5,6 +5,7 @@ import { SubCategoriesGrid } from "../components/SubCategoriesGrid"
 import { CategoryBrands } from "../components/CategoryBrands"
 import { PopularProducts } from "../components/PopularProducts"
 import { CatalogPage } from "./CatalogPage"
+import { BreadCrumbs } from "../components/BreadCrumbs"
 
 export const CategoryPage=()=>{
     const {id}=useParams<{id:string}>()
@@ -19,13 +20,22 @@ export const CategoryPage=()=>{
     if(!isCategoryLoading && category && category.parentId){
         return <CatalogPage/>
     }
+    const breadcrumbs=category?.breadcrumbs?.map((b)=>({
+        label:b.title,
+        path:`/category/${b.id}`
+    })) || []
     return(
-        <div className="max-w-[1200px] mx-auto " style={{padding:'4px 6px'}}>
+        <div className="font-sans" style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px 24px 40px 24px' }}>
+            {breadcrumbs?.length>0 && (
+                <div className="mb-4">
+                    <BreadCrumbs item={breadcrumbs}/>
+                </div>
+            )}
             {isCategoryLoading ? (
                 <div className="h-10 w-64 bg-gray-200 animate-pulse rounded-md" style={{marginBottom:'6px'}}></div>
 
             ):(
-                <h1 className="text-4xl font-bold text-[#221f1f]" style={{marginTop:'45px',marginLeft:'30px'}}>
+                <h1 className="text-4xl font-bold text-[#221f1f]" style={{marginTop:'20px'}}>
                     {category?.title}
                 </h1>
             )}

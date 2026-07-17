@@ -1,5 +1,5 @@
 import { Check, Heart, ShoppingCart } from "lucide-react"
-import { addToCart, decreaseQuantity, type Product } from "../store/cart/cartSlice"
+import { addToCart, type Product } from "../store/cart/cartSlice"
 import { useAppDispatch, useAppSelector } from "../store/hooks/hook"
 import { Link } from "react-router-dom"
 

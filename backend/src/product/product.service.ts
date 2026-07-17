@@ -1,12 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { ProductDto } from './product.dto';
 import { ProductFilterDto } from './productFilter.dto';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class ProductService {
     constructor(private readonly prisma:PrismaService){}
-    
+    private async BreadCrumbs(categoryId:string):Promise<{id:string,title:string}[]>{
+        const breadcrumbs:{id:string,title:string}[]=[]
+        let currentId:string | null=categoryId
+        while(currentId){
+            const cat=await this.prisma.category.findUnique({
+                where:{id:currentId},
+                select:{id:true,title:true,parentId:true}
+            });
+            if(!cat) break;
+
+            breadcrumbs.unshift({id:cat.id,title:cat.title})
+            currentId=cat.parentId
+        }
+        return breadcrumbs
+    }
     async create(dto:ProductDto){
         return await this.prisma.product.create({
             data:{
@@ -36,11 +51,25 @@ export class ProductService {
     })
   }
   async getOneProduct(id:string){
-    return this.prisma.product.findUnique({
+    const product=await this.prisma.product.findUnique({
       where:{
         id:id
-      }
+      },
+      include:{category:true}
     });
+    if(!product) throw new NotFoundException('Товар не знайдено')
+
+    let breadCrumbs:{id:string,title:string}[]=[]
+    if(product.categoryId){
+      breadCrumbs=await this.BreadCrumbs(product.categoryId)
+    }
+    return {
+      ...product,
+      breadCrumbs:[
+        ...breadCrumbs,
+        {id:product.id,title:product.title}
+      ]
+    }
   }
 
   async findAllWithFilters(query:ProductFilterDto){

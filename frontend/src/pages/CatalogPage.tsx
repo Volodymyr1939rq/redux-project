@@ -1,7 +1,6 @@
 import { Link, useParams, useSearchParams } from "react-router-dom"
 import { useGetAllBrandsQuery, useGetAllItemsQuery, useGetCategoryByIdQuery } from "../store/api/api";
 import { Loader, X } from "lucide-react";
-import { ProductCard } from "../components/ProductCard";
 import { LayoutToggle } from "../components/LayoutToggle";
 import { PriceFilter } from "../components/PriceFilter";
 import { BrandFilter } from "../components/BtandFilter";
@@ -9,6 +8,7 @@ import { SellerFilter } from "../components/SellerFilter";
 import { SortFilter } from "../components/SortFilter";
 import { Pagination } from "../components/Pagination";
 import { DeteiledProductCard } from "../components/DeteiledProductCard";
+import { BreadCrumbs } from "../components/BreadCrumbs";
 
 export const CatalogPage=()=>{
     const {id:categoryId}=useParams<{id:string}>()
@@ -28,7 +28,7 @@ export const CatalogPage=()=>{
         brand,
         seller,
         sort,
-        page
+        page,
     })
     const {data:category}=useGetCategoryByIdQuery(categoryId!)
     const {data:allBrands=[]}=useGetAllBrandsQuery()
@@ -63,8 +63,16 @@ export const CatalogPage=()=>{
             setSearchParams(params)
     }
 
+    const breadcrumbs=category?.breadcrumbs?.map((b)=>({
+        label:b.title,
+        path:`/category/${b.id}`
+    })) || []
+
     return (
        <div className="font-sans" style={{maxWidth:'1200px',margin:'0 auto',padding:'20px 24px 40px 24px'}}>
+        {breadcrumbs?.length>0 && (
+            <BreadCrumbs item={breadcrumbs}/>
+        )}
         <div className="text-3xl font-bold text-[#221f1f]" style={{marginBottom:'24px'}}>
             {category?.title}
         </div>

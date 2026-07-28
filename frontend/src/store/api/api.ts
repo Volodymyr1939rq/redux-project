@@ -1,6 +1,25 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import {type Banner, type Product } from "../cart/cartSlice";
 
+
+
+export interface IUser{
+    id:string,
+    email:string | null,
+    name:string | null,
+    phone:string | null,
+    picture:string | null,
+    isVerified:boolean,
+    role:string,
+}
+export interface EmailLoginAuth{
+    email:string,
+    password:string
+}
+export interface AuthResponse{
+    user:IUser,
+    message:string
+}
 export interface ProductResponse{
     data:Product[],
     page:number,
@@ -44,10 +63,12 @@ export interface ICategory{
 }
 export const api=createApi({
     reducerPath:'api',
-    tagTypes:['Items','Brands'],
+    tagTypes:['Items','Brands','User'],
     baseQuery:fetchBaseQuery({
-        baseUrl:'http://localhost:3000/'
+        baseUrl:'http://localhost:3000/',
+        credentials:'include'
     }),
+    
     endpoints:(builder)=>({
         getAllItems:builder.query<ProductResponse,ProductFiltersParam | void>({
             query:(param)=>({url:'product',params:param || {}}),
@@ -71,6 +92,42 @@ export const api=createApi({
         }),
         getUniqSellers:builder.query<Seller[],void>({
             query:()=>('seller/sellers')
+        }),
+
+        sendPhoneCode:builder.mutation<{message:string},{phone:string}>({
+            query:(body)=>({
+                url:'phoneauth/send',
+                method:'POST',
+                body
+            })
+        }),
+        verifyPhoneCode:builder.mutation<AuthResponse,{phone:string,code:string}>({
+            query:(body)=>({
+                url:'phoneauth/verify',
+                method:'POST',
+                body
+            })
+        }),
+        loginWithEmail:builder.mutation<AuthResponse,EmailLoginAuth>({
+            query:(body)=>({
+                url:'auth/login',
+                method:'POST',
+                body
+            }),
+            invalidatesTags:['User']
+        }),
+        loginWithGoogle:builder.mutation<{url:string},string>({
+            query:(provider)=>({
+                url:`auth/oauth/connect/${provider}`,
+                method:'GET'
+            })
+        }),
+        getMe:builder.query<IUser,void>({
+          query:()=>({
+             url:'auth/me',
+             method:'GET',
+          }),
+          providesTags:['User']
         })
     })
     
@@ -82,4 +139,9 @@ export const {useGetAllItemsQuery,
     useGetCategoriesQuery,
     useGetCategoryByIdQuery,
     useGetAllBrandsQuery,
-    useGetUniqSellersQuery}=api;
+    useGetUniqSellersQuery,
+    useSendPhoneCodeMutation,
+    useVerifyPhoneCodeMutation,
+    useLoginWithEmailMutation,
+    useLoginWithGoogleMutation,
+    useGetMeQuery}=api;

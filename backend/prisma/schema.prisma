@@ -13,28 +13,66 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum AuthProvider{
+  PHONE
+  GOOGLE
+  APPLE
+  EMAIL
+  
+}
+
+enum UserRole{
+  USER
+  ADMIN
+}
+
+model User{
+  id            String   @id  @default(cuid())
+  name          String?
+  email         String?  @unique
+  phone         String?  @unique
+  password      String? 
+  picture       String?
+  isVerified    Boolean  @default(false)
+  hashedRefreshToken  String?
+  role          UserRole  @default(USER)
+  accounts      Account[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Account{
+  id            String  @id @default(cuid())
+  userId        String?
+  provider      AuthProvider
+  providerId    String
+  user          User? @relation(fields: [userId],references: [id],onDelete:Cascade)
+
+  @@unique([provider,providerId])
+}
+
 model Product{
-  id        String      @id  @default(cuid())
-  title     String
-  description  String?
-  price     Float
-  oldPrice  Float
-  code      Int
-  seller    String
-  image     String
-  createdAt DateTime @default(now()) 
+  id            String      @id  @default(cuid())
+  title         String
+  description   String?
+  price         Float
+  oldPrice      Float
+  code          Int
+  seller        String
+  image         String
+  createdAt     DateTime @default(now()) 
 
-  category Category? @relation(fields: [categoryId],references: [id])
-  categoryId String? @map("category_id")
+  category      Category? @relation(fields: [categoryId],references: [id])
+  categoryId    String? @map("category_id")
 
-  brandId   String
-  brand     Brand    @relation(fields: [brandId],references: [id])
+  brandId       String
+  brand         Brand    @relation(fields: [brandId],references: [id])
 
   @@map("product")
 }
 
 model PromoBanner {
-  id  String    @id      @default(cuid())
+  id            String    @id      @default(cuid())
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -44,24 +82,24 @@ model PromoBanner {
 }
 
 model Category{
-  id String @id @default(cuid())
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @default(now()) @map("updated_at")
-  image      String?
-  parentId   String?
-  parent     Category? @relation("CategoryHierarchy",fields: [parentId],references: [id])
+  id            String @id @default(cuid())
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @default(now()) @map("updated_at")
+  image         String?
+  parentId      String?
+  parent        Category? @relation("CategoryHierarchy",fields: [parentId],references: [id])
 
-  children   Category[]  @relation("CategoryHierarchy")
-  title      String
-  products    Product[]
+  children      Category[]  @relation("CategoryHierarchy")
+  title         String
+  products      Product[]
 
   @@map("category")
 }
 
 model Brand{
-  id     String   @id    @default(cuid())
-  name   String   @unique
-  products Product[]
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @default(now())
+  id            String   @id    @default(cuid())
+  name          String   @unique
+  products      Product[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now())
 }

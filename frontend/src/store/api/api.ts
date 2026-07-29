@@ -106,7 +106,8 @@ export const api=createApi({
                 url:'phoneauth/verify',
                 method:'POST',
                 body
-            })
+            }),
+            invalidatesTags:['User']
         }),
         loginWithEmail:builder.mutation<AuthResponse,EmailLoginAuth>({
             query:(body)=>({

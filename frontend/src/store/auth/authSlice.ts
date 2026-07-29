@@ -3,12 +3,14 @@ import { api, type IUser } from "../api/api";
 
 interface AuthState{
     user:IUser | null
-    isAuth:boolean
+    isAuth:boolean,
+    isAuthModalOpen:boolean
 }
 
 const initialState:AuthState={
     user:null,
     isAuth:false,
+    isAuthModalOpen:false
 }
 
 export const authSlice=createSlice({
@@ -22,6 +24,12 @@ export const authSlice=createSlice({
         setUser:(state,action:PayloadAction<IUser>)=>{
             state.user=action.payload
             state.isAuth=true
+        },
+        openAuthModal:(state)=>{
+            state.isAuthModalOpen=true;
+        },
+        closeAuthModal:(state)=>{
+            state.isAuthModalOpen=false;
         }
     },
     extraReducers:(builder)=>{
@@ -35,5 +43,5 @@ export const authSlice=createSlice({
     }
 })
 
-export const {logout,setUser}=authSlice.actions
+export const {logout,setUser,openAuthModal,closeAuthModal}=authSlice.actions
 export default authSlice.reducer

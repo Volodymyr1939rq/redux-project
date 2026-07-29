@@ -4,13 +4,13 @@ import { CartModal } from "./CartModal"
 import { closeCart, openCart } from "../store/cart/cartSlice";
 import { SearchBar } from "./SearchBar";
 import { AuthModal } from "./AuthModal";
-import { useState } from "react";
 import { useGetMeQuery } from "../store/api/api";
+import { closeAuthModal, openAuthModal } from "../store/auth/authSlice";
 
 
 export const Header = () => {
     const dispatch = useAppDispatch();
-    const [isAuthModalOpen,setIsAuthModalOpen]=useState(false)
+    const isAuthModalOpen=useAppSelector((state)=>state.auth.isAuthModalOpen)
     const cartItems = useAppSelector((state) => state.cardItem.items) 
     const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0)
     const isCartOpen = useAppSelector((state) => state.cardItem.isCartOpen)
@@ -53,7 +53,7 @@ export const Header = () => {
                 ): (
                  <div>
                 <User size={24} 
-                onClick={()=>setIsAuthModalOpen(true)}
+                onClick={()=>dispatch(openAuthModal())}
                 className="cursor-pointer hover:text-[#00a046] transition"/>
                 </div>
                 )}
@@ -70,7 +70,7 @@ export const Header = () => {
             
         </div>
         <CartModal isOpen={isCartOpen} onClose={handleCloseCart}/>
-        <AuthModal onClose={()=>setIsAuthModalOpen(false)} isOpen={isAuthModalOpen}/>
+        <AuthModal onClose={()=>dispatch(closeAuthModal())} isOpen={isAuthModalOpen}/>
     </header>
     )
 }

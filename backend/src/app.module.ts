@@ -11,9 +11,10 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { ProviderModule } from './auth/provider/provider.module';
 import { PhoneauthModule } from './phoneauth/phoneauth.module';
+import { FavoriteModule } from './favorite/favorite.module';
 
 @Module({
-  imports: [CategoryModule, ProductModule, BrandModule, SellerModule, AuthModule, UserModule,ConfigModule.forRoot({isGlobal:true}), ProviderModule, PhoneauthModule],
+  imports: [CategoryModule, ProductModule, BrandModule, SellerModule, AuthModule, UserModule,ConfigModule.forRoot({isGlobal:true}), ProviderModule, PhoneauthModule, FavoriteModule],
   controllers: [AppController],
   providers: [AppService,PrismaService],
 })

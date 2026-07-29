@@ -2,6 +2,7 @@ import { X, Trash2 } from "lucide-react"
 import { useAppDispatch, useAppSelector } from "../store/hooks/hook"
 import { removeFromCart, decreaseQuantity, addToCart } from "../store/cart/cartSlice"
 
+
 interface CartModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -9,9 +10,10 @@ interface CartModalProps {
 
 export const CartModal = ({ isOpen, onClose }: CartModalProps) => {
     const dispatch = useAppDispatch();
+    
     const cartItems = useAppSelector((state) => state.cardItem.items);
     const totalPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-
+    
     if (!isOpen) return null;
 
     return (

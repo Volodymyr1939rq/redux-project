@@ -2,6 +2,9 @@ import { Check, Heart, ShoppingCart } from "lucide-react"
 import { addToCart, type Product } from "../store/cart/cartSlice"
 import { useAppDispatch, useAppSelector } from "../store/hooks/hook"
 import { Link } from "react-router-dom"
+import { useGetMeQuery } from "../store/api/api"
+import { openAuthModal } from "../store/auth/authSlice"
+import { useState } from "react"
 
 interface ProductProps {
     product: Product
@@ -9,10 +12,19 @@ interface ProductProps {
 
 export const ProductCard = ({ product }: ProductProps) => {
     const dispatch = useAppDispatch()
+    const {data:user}=useGetMeQuery()
     const cartItems = useAppSelector((state) => state.cardItem.items)
     const currentItems = cartItems.find((f) => f.id == product.id)
     const oldPrice = (product.price * 1.2).toFixed(0)
-    
+    const [isFavorite,setIsFavorite]=useState(false)
+
+    const handleFavoriteClick=()=>{
+        if(!user){
+            dispatch(openAuthModal())
+        }else{
+            setIsFavorite(!isFavorite)
+        }
+    }
     return (
       
      <div 
@@ -21,7 +33,10 @@ export const ProductCard = ({ product }: ProductProps) => {
 >
         
         <button className="absolute right-4 top-4 text-orange-500 hover:text-orange-600 transition z-10">
-            <Heart size={24} strokeWidth={1.5} />
+            <Heart 
+            onClick={handleFavoriteClick}
+            size={24} strokeWidth={1.5} 
+            fill={isFavorite ? 'currentColor':'none'}/>
         </button>
         
         <div className="p-4 flex flex-col h-full">

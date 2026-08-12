@@ -1,11 +1,12 @@
-import { Bell, FileText, LayoutGrid, Menu, Scale, ShoppingCart, User} from "lucide-react"
+import { Bell, FileText, Heart, LayoutGrid, Menu, Scale, ShoppingCart, User} from "lucide-react"
 import { useAppDispatch, useAppSelector } from "../store/hooks/hook"
 import { CartModal } from "./CartModal"
 import { closeCart, openCart } from "../store/cart/cartSlice";
 import { SearchBar } from "./SearchBar";
 import { AuthModal } from "./AuthModal";
-import { useGetMeQuery } from "../store/api/api";
+import { useGetFavoritesQuery, useGetMeQuery } from "../store/api/api";
 import { closeAuthModal, openAuthModal } from "../store/auth/authSlice";
+import { Link } from "react-router-dom";
 
 
 export const Header = () => {
@@ -17,13 +18,15 @@ export const Header = () => {
     const handleOpenCart = () => dispatch(openCart())
     const handleCloseCart = () => dispatch(closeCart())
     const {data:user,isLoading}=useGetMeQuery()
+    const {data:favorites=[]}=useGetFavoritesQuery(undefined,{skip:!user})
+    const totalFavorites=favorites.length
     
     return (
      <header className="flex justify-center items-center px-4 bg-[#221f1f] h-18 w-full sticky top-0 z-50">
         <div className="w-full max-w-310 flex items-center justify-start min-w-0 gap-4 lg:gap-8">
             
             <div className="flex items-center gap-3 md:gap-4 shrink-0">
-                <button className="text-white hover:text-[#00a046] transition">
+                <button className="flex items-center justify-center rounded-lg w-10 h-10 text-white hover:bg-white/20 transition-colors cursor-pointer">
                     <Menu size={28}/>
                 </button>
                 <div className="flex items-center gap-2 cursor-pointer">
@@ -35,39 +38,60 @@ export const Header = () => {
             <button className="md:flex bg-white/10 hover:bg-white/20 transition px-4 min-w-27.5 h-10 rounded-lg flex items-center justify-center gap-2 font-medium shrink-0 text-white">
                 <LayoutGrid size={20}/> Каталог
             </button>
-        
+            <div className="flex-1 mix-w-0">
+
            <SearchBar/>
+            </div>
         
             <div className="flex items-center gap-5 md:gap-6 text-white shrink-0">
                 {isLoading ? (
                     <div className="w-8 h-8 rounded-full bg-gray-700 animate-pulse"/>
                 ) : user ? (
                     <div className="flex items-center gap-5 md:gap-6">
-                        <button className="hover:text-[#00a046] transition" title="Замовлення">
+                        <button className="flex items-center justify-center rounded-lg w-10 h-10 hover:bg-white/20 transition-colors cursor-pointer" title="Замовлення">
                             <FileText size={24} />
                         </button>
-                        <button className="hover:text-[#00a046] transition" title="Сповіщення">
+                        <button className="cursor-pointer" title="Сповіщення">
                             <Bell size={24} />
                         </button>
+                        {totalFavorites>0 && (
+
+                        <Link 
+                        to='/wishlist'
+                        title="Списки бажань"
+                        className="flex items-center cursor-pointer justify-center w-10 h-10 rounded-lg hover:bg-white/20 transition-colors  ">
+                            <div className="relative flex items-center justify-center">
+                            <Heart size={24}/>
+                                <div className="absolute -top-3 -right-[14px] bg-gray-500 text-white text-[11px] font-semibold flex items-center justify-center w-5 h-5 rounded-full">
+                                    {totalFavorites}
+                                </div>
+                            </div>
+                        </Link>
+                        )}
                     </div>
                 ): (
-                 <div>
+                 <div className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-white/20 transition-colors cursor-pointer">
                 <User size={24} 
                 onClick={()=>dispatch(openAuthModal())}
-                className="cursor-pointer hover:text-[#00a046] transition"/>
+                />
                 </div>
                 )}
-                <Scale size={24} className="cursor-pointer hover:text-[#00a046] transition"/>
-                <div className="relative flex items-center cursor-pointer" onClick={handleOpenCart}>
-                    <ShoppingCart size={24} className="hover:text-[#00a046] transition relative" />
-                    {totalItems > 0 && (
-                        <div className="absolute -top-2 -right-3 bg-red-500 text-white text-[11px] font-bold flex items-center justify-center min-w-4 h-5 px-1 rounded-full border-2 border-[#221f1f]">
+                <div className="flex items-center justify-center w-10 h-10 rounded-lg  cursor-pointer hover:bg-white/20 transition-colors">
+                <Scale size={24} />
+                </div>
+
+                <div className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-white/20 transition-colors cursor-pointer" onClick={handleOpenCart}>
+                   <div className="relative flex items-center justify-center">
+                    <ShoppingCart size={24} />
+                {totalItems>0 && (
+                        <div className="absolute -top-3 -right-3 bg-green-600 text-white text-[11px] font-bold flex items-center justify-center w-5 h-5 rounded-full">
                             {totalItems}
                         </div>
-                    )}
+                        )}
                 </div>
             </div>
-            
+                
+                </div>
         </div>
         <CartModal isOpen={isCartOpen} onClose={handleCloseCart}/>
         <AuthModal onClose={()=>dispatch(closeAuthModal())} isOpen={isAuthModalOpen}/>

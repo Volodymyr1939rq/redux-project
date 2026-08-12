@@ -61,9 +61,43 @@ export interface ICategory{
     children?:ICategory[],
     breadcrumbs?:BreadCrumbs[]
 }
+
+export interface Favorites{
+    id:string,
+    userId:string,
+    wishlistId:string
+    productId:string,
+    product:Product
+}
+
+export interface WishListResponse{
+    id:string
+    name:string,
+    userId:string,
+    isDefault:boolean
+    items:Favorites[]
+}
+
+export interface toggleFavorites{
+    message:string,
+    isFavorite:boolean
+}
+
+export type MakeDefaultWishListResponse=[
+    {count:number},
+    {id:string,name:string,isDefault:boolean,userId:string}
+]
+
+export interface MoveItemResponse{
+      id:string,
+      userId:string,
+      wishlistId:string,
+      productId:string
+}
+
 export const api=createApi({
     reducerPath:'api',
-    tagTypes:['Items','Brands','User'],
+    tagTypes:['Items','Brands','User','Favorite','WishList'],
     baseQuery:fetchBaseQuery({
         baseUrl:'http://localhost:3000/',
         credentials:'include'
@@ -129,9 +163,72 @@ export const api=createApi({
              method:'GET',
           }),
           providesTags:['User']
+        }),
+
+        getFavorites:builder.query<Favorites[],void>({
+            query:()=>'favorite',
+            providesTags:['Favorite']
+        }),
+
+        toggleFavorites:builder.mutation<toggleFavorites,string>({
+            query:(productId)=>({
+                url:`favorite/${productId}`,
+                method:'POST'
+            }),
+            invalidatesTags:['Favorite','WishList']
+        }),
+        clearFromWishList:builder.mutation<{message:string},string>({
+            query:(wishlistId)=>({
+                url:`/favorite/list/${wishlistId}`,
+                method:'DELETE'
+            }),
+            invalidatesTags:['Favorite','WishList']
+        }),
+        getWishList:builder.query<WishListResponse[],void>({
+            query:()=>({
+                url:'favorite/list',
+            }),
+            providesTags:['WishList'] 
+        }),
+        createWishList:builder.mutation<WishListResponse,string>({
+            query:(name)=>({
+                url:'favorite/wishlist',
+                method:'POST',
+                body:{name}
+            }),
+            invalidatesTags:['WishList']
+        }),
+        updateWishList:builder.mutation<WishListResponse,{wishlistId:string,name:string}>({
+            query:({wishlistId,name})=>({
+                url:`favorite/list/${wishlistId}`,
+                method:'PATCH',
+                body:{name}
+            }),
+            invalidatesTags:['WishList']
+        }),
+        getWishListById:builder.query<WishListResponse,{id:string,sort:string}>({
+            query:({id,sort})=>({
+                url:`favorite/list/${id}`,
+                params:{sort}
+            }),
+            providesTags:['WishList']
+        }),
+        makeDefaultwishList:builder.mutation<MakeDefaultWishListResponse,{wishlistId:string}>({
+            query:({wishlistId})=>({
+                url:`favorite/list/${wishlistId}/default`,
+                method:'PATCH',
+            }),
+            invalidatesTags:['WishList']
+        }),
+        moveItems:builder.mutation<MoveItemResponse,{favoriteId:string,targetWishListId:string}>({
+            query:({favoriteId,targetWishListId})=>({
+                url:`favorite/item/${favoriteId}/move`,
+                method:'PATCH',
+                body:{targetWishListId}
+            }),
+            invalidatesTags:['WishList']
         })
     })
-    
 })
 
 export const {useGetAllItemsQuery,
@@ -145,4 +242,13 @@ export const {useGetAllItemsQuery,
     useVerifyPhoneCodeMutation,
     useLoginWithEmailMutation,
     useLoginWithGoogleMutation,
-    useGetMeQuery}=api;
+    useGetMeQuery,
+    useGetFavoritesQuery,
+    useToggleFavoritesMutation,
+    useClearFromWishListMutation,
+    useGetWishListQuery,
+    useCreateWishListMutation,
+    useUpdateWishListMutation,
+    useGetWishListByIdQuery,
+    useMakeDefaultwishListMutation,
+    useMoveItemsMutation}=api;

@@ -2,9 +2,8 @@ import { Check, Heart, ShoppingCart } from "lucide-react"
 import { addToCart, type Product } from "../store/cart/cartSlice"
 import { useAppDispatch, useAppSelector } from "../store/hooks/hook"
 import { Link } from "react-router-dom"
-import { useGetMeQuery } from "../store/api/api"
+import { useGetFavoritesQuery, useGetMeQuery, useToggleFavoritesMutation } from "../store/api/api"
 import { openAuthModal } from "../store/auth/authSlice"
-import { useState } from "react"
 
 interface ProductProps {
     product: Product
@@ -16,13 +15,15 @@ export const ProductCard = ({ product }: ProductProps) => {
     const cartItems = useAppSelector((state) => state.cardItem.items)
     const currentItems = cartItems.find((f) => f.id == product.id)
     const oldPrice = (product.price * 1.2).toFixed(0)
-    const [isFavorite,setIsFavorite]=useState(false)
+    const {data:favorites=[]}=useGetFavoritesQuery(undefined,{skip:!user})
+    const [toggleFavprites]=useToggleFavoritesMutation()
+    const existedFavorites=favorites.some((fav)=>fav.productId===product.id)
 
     const handleFavoriteClick=()=>{
         if(!user){
             dispatch(openAuthModal())
         }else{
-            setIsFavorite(!isFavorite)
+            toggleFavprites(product.id)
         }
     }
     return (
@@ -36,7 +37,7 @@ export const ProductCard = ({ product }: ProductProps) => {
             <Heart 
             onClick={handleFavoriteClick}
             size={24} strokeWidth={1.5} 
-            fill={isFavorite ? 'currentColor':'none'}/>
+            fill={existedFavorites ? 'currentColor':'none'}/>
         </button>
         
         <div className="p-4 flex flex-col h-full">

@@ -7,6 +7,8 @@ import { Header } from './components/Header'
 import { SearchPage } from './pages/SearchPage'
 import { CategoryPage } from './pages/CategoryPage'
 import { CatalogPage } from './pages/CatalogPage'
+import { WishListPage } from './pages/WishListPage'
+import { WishListDetailedPage } from './pages/WishListDetailedPage'
 
 function App() {
  return (
@@ -18,6 +20,8 @@ function App() {
         <Route path='/search' element={<SearchPage/>}/>
         <Route path='/category/:id' element={<CategoryPage/>}/>
         <Route path="/catalog/:categoryId" element={<CatalogPage/>}/>
+        <Route path='/wishlist' element={<WishListPage/>}/>
+        <Route path='/wishlist/:id' element={<WishListDetailedPage/>}/>
     </Routes>
     </BrowserRouter>
  )

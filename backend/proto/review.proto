@@ -1,0 +1,100 @@
+syntax= "proto3";
+
+package reviews;
+
+service ReviewsService {
+    rpc GetProductReviews(GetProductReviewsRequest) returns (GetProductReviewsResponse);
+
+    rpc createReviews(CreateReviewRequest) returns (Review);
+
+    rpc GetProductRatingSummary(GetProductRatingRequest) returns (GetProductRatingResponse);
+
+    rpc AddLike(AddLikeRequest) returns (AddLikeResponse);
+
+    rpc GetReplies(GetRepliesRequest) returns (GetRepliesResponse);
+}
+
+message GetRepliesRequest {
+  string reviewId = 1;
+  optional int32 page = 2;
+  optional int32 limit = 3;  
+}
+
+message GetRepliesResponse {
+  repeated Review replies = 1;
+}
+
+message AddLikeRequest {
+  string reviewId = 1;
+}
+
+message AddLikeResponse {
+  string id = 1;
+  string likes = 2;
+}
+message Review {
+  string id = 1;
+  string productId = 2;
+  string userId = 3;
+  int32 rating = 4;
+  string text = 5;
+  repeated Review replies = 6;
+  optional string advantages = 7;
+  optional string disadvantages = 8;
+  repeated string videoUrl = 9;
+  repeated string imageUrl = 10;
+  string authorName = 11;
+  string authorEmail = 12;
+  bool notifyOrReply = 13;
+  int32 likes = 14;
+
+}
+message GetProductReviewsRequest {
+  string productId = 1;
+
+  optional int32 limit = 2;
+  optional int32 page = 3;
+
+  optional int32 rating = 4;
+  optional bool withPhoto = 5;
+  optional bool withVideo = 6;
+
+  optional string sortBy = 7;
+}
+
+message GetProductReviewsResponse {
+  repeated Review reviews=1;
+}
+
+message CreateReviewRequest {
+  string productId = 1;
+  string userId = 2;
+  int32  rating = 3;
+  string text = 4;
+  string advantages = 5;
+  string disadvantages = 6;
+  string authorName = 7;
+  string authorEmail = 8;
+  bool notifyOrReply = 9;
+  repeated string imageUrl = 10;
+  repeated string videoUrl = 11;
+  string replyToId = 12;
+  optional string productName = 13;
+}
+
+message  GetProductRatingRequest{
+  string productId = 2;
+
+}
+
+message RatingDistribution {
+  int32 count = 1;
+  int32 stars = 2;
+}
+
+message GetProductRatingResponse {
+  int32 avarageRating = 1;
+  int32 totalReviews = 2;
+
+  repeated RatingDistribution distribution = 3;
+}
